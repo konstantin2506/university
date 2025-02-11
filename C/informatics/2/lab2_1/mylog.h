@@ -1,0 +1,4 @@
+#ifndef MYLOG_H
+#define MYLOG_H
+float MyLog(float, int);
+#endif
