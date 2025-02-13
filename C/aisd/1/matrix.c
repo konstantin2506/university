@@ -4,7 +4,8 @@
 #include "matrix.h"
 #include "input.h"
 
-Matrix* CreateMatrix(void)
+Matrix* 
+CreateMatrix(void)
 {
 	int numLines;
 	int err = 0;
@@ -32,7 +33,7 @@ Matrix* CreateMatrix(void)
 	matrix->lines = (Line* ) malloc(sizeof(Line) * numLines);
 	if(matrix->lines == NULL){
 		printf("Fatal: LINES memory was not allocated\n");
-		free(matrix);
+		DeleteMatrix(matrix);
 		return NULL;
 	}
 	for(int i = 0; i < numLines; i++){
@@ -49,20 +50,19 @@ Matrix* CreateMatrix(void)
 			if(err != ERROR_EOF)	
 				printf("Error: not a number\n");
 		}while(err != ERROR_EOF);
-		if(err == ERROR_EOF)
+		if(err == ERROR_EOF){
+			DeleteMatrix(matrix);
 			return NULL;
-			
+		}
+				
 		matrix->lines[i].numElems = numElems;
 		matrix->lines[i].elems = (int* ) malloc(sizeof(int) * numElems);
 		if(matrix->lines[i].elems == NULL){
 			printf("Fatal: LINE[%d] memory was not alocated\n", i);
-			for(int k = 0; k < i; k++){
-				free(matrix->lines[k].elems);
-			}
-			free(matrix->lines);
-			free(matrix);
+			DeleteMatrix(matrix);
 			return NULL;
 		}
+
 		for(int j = 0; j < numElems; j++){
 			int elem;
 			do{
@@ -75,11 +75,7 @@ Matrix* CreateMatrix(void)
 			}while(err != ERROR_EOF);
 			
 			if(err == ERROR_EOF){
-				for(int k = 0; k < i; k++){
-					free(matrix->lines[k].elems);
-				}
-				free(matrix->lines);
-				free(matrix);
+				DeleteMatrix(matrix);
 				return NULL;
 			}
 			
@@ -88,6 +84,7 @@ Matrix* CreateMatrix(void)
 	}	
 	return matrix;
 }
+
 void 
 PrintMatrix(Matrix* matrix)
 {
@@ -97,10 +94,24 @@ PrintMatrix(Matrix* matrix)
 	}
 	printf("numLines = %d\n", matrix->numLines);
 	for(int i = 0; i < matrix->numLines; i++){
-		printf("Line[%d]: ", i);
+		printf("Line[%d]: ", i+1);
 		for(int j = 0; j < matrix->lines[i].numElems; j++){
 			printf("%d ", matrix->lines[i].elems[j]);
 		}
 		printf("\n");
 	}
+}
+
+void
+DeleteMatrix(Matrix* matrix)
+{
+	if(matrix == NULL)
+		return;
+	for(int i = 0; i < matrix->numLines; i++){
+		if(matrix->lines[i].elems != NULL)
+			free(matrix->lines[i].elems);
+	}
+	if(matrix->lines != NULL)
+		free(matrix->lines);
+	free(matrix);
 }

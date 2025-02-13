@@ -8,5 +8,6 @@ main(void)
 {
 	Matrix* matrix = CreateMatrix();
 	PrintMatrix(matrix);
+	DeleteMatrix(matrix);
 	return 0;
 }
