@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "matrix.h"
+#include "hashtable.h"
 #include "input.h"
 
 Matrix* 
@@ -85,7 +86,50 @@ CreateMatrix(void)
 	}	
 	return matrix;
 }
-
+int 
+TransformMatrix(const Matrix* matrix, Matrix* result)
+{
+	for(int i = 0; i < matrix->numLines; i++){
+		HashTable* htable = HTCreate(TABLE_SIZE);
+		if(htable == NULL){
+			fprintf(stderr, "error: null htable");
+			DeleteMatrix(result);
+			return 1;
+		}
+		result->lines[i].numElems = 0;
+		for(int j = 0; j < matrix->lines[i].numElems; j++){
+			int resFind = 0;
+			int err = 0;
+			int key = matrix->lines[i].elems[j];
+			HTFind(htable, key, &resFind);
+			if(resFind == 1){
+				(result->lines[i].numElems)++;
+			}
+			err = HTSmartInsert(&htable, key, resFind + 1);
+			if(err != 0){
+				fprintf(stderr, "error: insert in htable\ncode: %d", err);
+				HTDelete(htable);
+				DeleteMatrix(result);
+				return 1;
+			}
+		}
+		result->lines[i].elems = (int* ) malloc(sizeof(int) * result->lines[i].numElems);
+		if(result->lines[i].elems == NULL){
+			fprintf(stderr, "error: null result->lines[%d].elems", i);
+		}
+		int k = 0;
+		ListNode* ptr = htable->list->first;
+		while((k < result->lines[i].numElems) && (ptr != NULL)){
+			if(ptr->item->value >= 2){
+				result->lines[i].elems[k] = ptr->item->key;
+				k++;
+			}
+			ptr = ptr->next;
+		}
+		HTDelete(htable);
+	}
+	return 0;
+}
 void 
 PrintMatrix(Matrix* matrix)
 {

@@ -4,6 +4,8 @@
 #include "list.h"
 #include "arrays.h"
 
+#define TABLE_SIZE 128
+
 typedef struct HashTable{
 	NodeVector* vec;
 	List* list;

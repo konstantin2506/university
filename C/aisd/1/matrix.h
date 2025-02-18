@@ -13,5 +13,6 @@ typedef struct Matrix{
 
 Matrix* CreateMatrix(void);
 void PrintMatrix(Matrix* );
+int TransformMatrix(const Matrix* matrix, Matrix* result);
 void DeleteMatrix(Matrix* );
 #endif

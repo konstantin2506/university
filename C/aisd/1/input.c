@@ -1,5 +1,6 @@
-#include "input.h"
 #include <stdio.h>
+
+#include "input.h"
 
 #define BUFFER_SIZE 100
 
