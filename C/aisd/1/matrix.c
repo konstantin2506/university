@@ -5,23 +5,13 @@
 #include "hashtable.h"
 #include "input.h"
 
+
 Matrix* 
 CreateMatrix(void)
 {
 	int numLines = 0;
 	int err = 0;
-	do{
-		printf("Enter number of lines: ");
-		if((err = InputInt32(&numLines)) == 0){
-			if(numLines < 0){
-				fprintf(stderr, "Error: number less than 0\n");
-				continue;
-			}
-			break;
-		}
-		if(err != ERROR_EOF)	
-			fprintf(stderr, "Error: not a number\n");
-	}while(err != ERROR_EOF);
+	err = GetNumber("Enter number of lines: ", &numLines, NOT_IN_LOOP, SIGNED);
 	
 	if(err == ERROR_EOF)
 		return NULL;
@@ -40,18 +30,7 @@ CreateMatrix(void)
 	for(int i = 0; i < numLines; i++){
 		int numElems = 0;
 		matrix->lines[i].numElems = 0;
-		do{
-			printf("Enter number of elements in line[%d]: ", i+1);
-			if((err = InputInt32(&numElems)) == 0){
-				if(numElems < 0){
-					fprintf(stderr, "Error: number less than 0\n");
-					continue;
-				}
-				break;
-			}
-			if(err != ERROR_EOF)	
-				fprintf(stderr, "Error: not a number\n");
-		}while(err != ERROR_EOF);
+		err = GetNumber("Enter number of elements in line", &numElems, i+1, SIGNED);
 		
 		matrix->lines[i].numElems = numElems;
 		matrix->lines[i].elems = (int* ) malloc(sizeof(int) * numElems);
@@ -67,15 +46,7 @@ CreateMatrix(void)
 		
 		for(int j = 0; j < numElems; j++){
 			int elem;
-			do{
-				printf("Enter elems[%d]: ", j+1);
-				
-				if((err = InputInt32(&elem)) == 0)
-					break;
-				if(err != ERROR_EOF)		
-					fprintf(stderr, "Error: not a number\n");
-			}while(err != ERROR_EOF);
-			
+			err = GetNumber("Enter elems", &elem, j+1, UNSIGNED);
 			if(err == ERROR_EOF){
 				DeleteMatrix(matrix);
 				return NULL;

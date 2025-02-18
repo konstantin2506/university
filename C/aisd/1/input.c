@@ -4,6 +4,31 @@
 
 #define BUFFER_SIZE 100
 
+int
+GetNumber(const char* msg, int* res, int loopNumber, int sign)
+{
+	int err = 0;
+	do{
+		if(loopNumber < 0){
+			printf("%s ", msg);
+		}
+		else{
+			printf("%s[%d]: ", msg, loopNumber);
+		}	
+		if((err = InputInt32(res)) == 0){
+			if(sign && (*res < 0)){
+				fprintf(stderr, "Error: number less than 0\n");
+				continue;
+			}
+			return 0;
+		}
+		if(err != ERROR_EOF){	
+			fprintf(stderr, "Error: not a number\n");
+		}
+	}while(err != ERROR_EOF);
+	
+	return err;	
+}
 int 
 InputInt(long* x, int size)
 {
